@@ -109,8 +109,33 @@ public abstract class FTree<M, T> implements Iterable<T>
   {
     Measure<Integer, Object> measure = Measure.<Object>size();
     FTree<Integer, Object> ft = FTree.treeOf(measure);
-    ft = ft.addRight("a").addRight("b").addRight("c");
-    System.out.println(ft.split(Predicate.index(1), measure.empty()));
-    System.out.println(ft.split(Predicate.index(2), measure.empty()));
+    for (int i = 0; i < 200; i++)
+    {
+      ft = ft.addLeft(i);
+      List<Object> ftList = ft.toList();
+      for (int j = 0; j < i; j++)
+      {
+        Split<Integer, Object> split = ft.split(Predicate.index(j), 0);
+        if (!(split.getLeft().c() == j))
+        {
+          System.out.println("error");
+        }
+        if (!(split.getRight().c() == i - j))
+        {
+          System.out.println("error");
+        }
+        FTree<Integer, Object> appendSplit = split.getLeft().addRight(split.getV()).append(split.getRight());
+        if (!(appendSplit.toList().equals(ftList)))
+        {
+          System.out.println(ft + " * " + split + " * " + appendSplit);
+        }
+      }
+    }
+//    for (int i = 0; i < 30; i++)
+//    {
+//      ft = ft.addLeft(i);
+//    }
+//    Split<Integer, Object> split = ft.split(Predicate.index(20), 0);
+//    System.out.println(split);
   }
 }

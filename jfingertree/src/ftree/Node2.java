@@ -78,7 +78,13 @@ public class Node2<M, T> implements Node<M, T>
   {
     return (T[]) new Object[] {n1, n2};
   }
-
+  
+  @Override
+  public T[] toReverseArray()
+  {
+    return (T[]) new Object[] {n2, n1};
+  }
+  
   @Override
   public String toString()
   {

@@ -194,7 +194,7 @@ public class Deep<M, T> extends FTree<M, T>
       {
         return treeOfDigits(measure(), sf);
       }
-      return new Deep(measure(), (T[]) new Object[] { m.leftHead()}, m.leftTail(), sf);
+      return new Deep<M, T>(measure(), m.leftHead().toArray(), m.leftTail(), sf);
     }
     return new Deep(measure(), leftTail(pr), m, sf);
   }
@@ -214,7 +214,7 @@ public class Deep<M, T> extends FTree<M, T>
       {
         return treeOfDigits(measure(), pr);
       }
-      return new Deep(measure(), pr, m.rightTail(), (T[]) new Object[] { m.rightHead()});
+      return new Deep(measure(), pr, m.rightTail(), m.rightHead().toReverseArray());
     }
     return new Deep(measure(), pr, m, leftTail(sf));
   }
@@ -800,8 +800,8 @@ public class Deep<M, T> extends FTree<M, T>
           }
           else
           {
-            return new Split<M, T>(treeOfDigits(measure(), split[0]), pr[ipr], new Deep(measure(),
-                (T[]) new Object[] { m.leftHead()}, m.leftTail(), sf));
+            return new Split<M, T>(treeOfDigits(measure(), split[0]), pr[ipr], new Deep(measure(), m.leftHead()
+                .toArray(), m.leftTail(), sf));
           }
         }
         else
@@ -828,8 +828,9 @@ public class Deep<M, T> extends FTree<M, T>
               return new Split<M, T>(treeOfDigits(measure(), pr), vs[0], new Deep(measure(), new Object[] { vs[1]},
                   msplit.getRight(), sf));
             }
-            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft().rightTail(), new Object[] { msplit
-                .getLeft().rightHead()}), vs[0], new Deep(measure(), new Object[] { vs[1]}, msplit.getRight(), sf));
+            return new Split<M, T>(new Deep<M, T>(measure(), pr, msplit.getLeft().rightTail(), msplit.getLeft()
+                .rightHead().toReverseArray()), vs[0],
+                new Deep(measure(), new Object[] { vs[1]}, msplit.getRight(), sf));
           }
           case 3: // *n1* n2 n3
           {
@@ -838,9 +839,8 @@ public class Deep<M, T> extends FTree<M, T>
               return new Split<M, T>(treeOfDigits(measure(), pr), vs[0], new Deep(measure(), new Object[] { vs[1],
                   vs[2]}, msplit.getRight(), sf));
             }
-            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft().rightTail(), new Object[] { msplit
-                .getLeft().rightHead()}), vs[0], new Deep(measure(), new Object[] { vs[1], vs[2]}, msplit.getRight(),
-                sf));
+            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft().rightTail(), msplit.getLeft().rightHead()
+                .toReverseArray()), vs[0], new Deep(measure(), new Object[] { vs[1], vs[2]}, msplit.getRight(), sf));
           }
         }
       }
@@ -857,11 +857,11 @@ public class Deep<M, T> extends FTree<M, T>
                   reverseTreeOfDigits(measure(), sf));
             }
             return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0]}), vs[1], new Deep(
-                measure(), new Object[] { msplit.getRight().leftHead()}, msplit.getRight().leftTail(), sf));
+                measure(), msplit.getRight().leftHead().toArray(), msplit.getRight().leftTail(), sf));
           }
           case 3: // n1 *n2* n3
             return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0]}), vs[1], new Deep(
-                measure(), new Object[] { vs[1]}, msplit.getRight(), sf));
+                measure(), new Object[] { vs[2]}, msplit.getRight(), sf));
         }
       }
       if (vs.length > 2)
@@ -871,11 +871,11 @@ public class Deep<M, T> extends FTree<M, T>
         {
           if (msplit.getRight().isEmpty())
           {
-            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0], vs[1]}), vs[2],
+            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[1], vs[0]}), vs[2],
                 reverseTreeOfDigits(measure(), sf));
           }
-          return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0], vs[1]}), vs[2],
-              new Deep(measure(), new Object[] { msplit.getRight().leftHead()}, msplit.getRight().leftTail(), sf));
+          return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[1], vs[0]}), vs[2],
+              new Deep(measure(), msplit.getRight().leftHead().toArray(), msplit.getRight().leftTail(), sf));
         }
       }
     }
@@ -893,8 +893,8 @@ public class Deep<M, T> extends FTree<M, T>
           }
           else
           {
-            return new Split<M, T>(new Deep(measure(), pr, m.rightTail(), (T[]) new Object[] { m.rightHead()}),
-                sf[isf], treeOfDigits(measure(), split[0]));
+            return new Split<M, T>(new Deep(measure(), pr, m.rightTail(), m.rightHead().toReverseArray()), sf[isf],
+                treeOfDigits(measure(), split[0]));
           }
         }
         else

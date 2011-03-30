@@ -6,4 +6,5 @@ public interface Node<M, T> extends Iterable<T>
 {
   M c();
   T[] toArray();
+  T[] toReverseArray();
 }
