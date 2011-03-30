@@ -22,14 +22,14 @@ public class Single<M, T> extends FTree<M, T>
 
   public FTree<M, T> addLeft(T v)
   {
-    return new Deep<M, T>(measure(), measure().sum(c(), measure().measure(v)), (T[]) new Object[] { v}, new Empty<M, Node<M, T>>(
-        new NodeMeasure<M, T>(measure())), (T[]) new Object[] { this.v});
+    return new Deep<M, T>(measure(), measure().sum(c(), measure().measure(v)), (T[]) new Object[] { v},
+        new Empty<M, Node<M, T>>(new NodeMeasure<M, T>(measure())), (T[]) new Object[] { this.v});
   };
 
   public FTree<M, T> addRight(T v)
   {
-    return new Deep<M, T>(measure(), measure().sum(c(), measure().measure(v)), (T[]) new Object[] { this.v}, new Empty<M, Node<M, T>>(
-        new NodeMeasure<M, T>(measure())), (T[]) new Object[] { v});
+    return new Deep<M, T>(measure(), measure().sum(c(), measure().measure(v)), (T[]) new Object[] { this.v},
+        new Empty<M, Node<M, T>>(new NodeMeasure<M, T>(measure())), (T[]) new Object[] { v});
   };
 
   @Override
@@ -188,5 +188,10 @@ public class Single<M, T> extends FTree<M, T>
   public String toStringWithMeasures()
   {
     return "<#" + c() + "# " + v + ">";
+  }
+
+  public Split<M, T> split(Predicate<M> p, M i)
+  {
+    return new Split<M, T>(new Empty<M, T>(measure()), v, new Empty<M, T>(measure()));
   }
 }

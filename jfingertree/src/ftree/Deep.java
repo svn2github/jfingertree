@@ -24,10 +24,12 @@ public class Deep<M, T> extends FTree<M, T>
     throw new IllegalStateException();
   }
 
-  private static <M, T> FTree<M, T> toTree(Measure<M, T> measure, T[] digits)
+  private static <M, T> FTree<M, T> treeOfDigits(Measure<M, T> measure, T[] digits)
   {
     switch (digits.length)
     {
+      case 0:
+        return treeOf(measure);
       case 1:
         return treeOf(measure, digits[0]);
       case 2:
@@ -37,10 +39,28 @@ public class Deep<M, T> extends FTree<M, T>
       case 4:
         return leftTreeOf(measure, digits[0], digits[1], digits[2], digits[3]);
     }
-    throw new IllegalStateException();
+    throw new IllegalStateException(String.valueOf(digits.length));
   }
 
-  private static <M, T> T[] tail(T[] digits)
+  private static <M, T> FTree<M, T> reverseTreeOfDigits(Measure<M, T> measure, T[] digits)
+  {
+    switch (digits.length)
+    {
+      case 0:
+        return treeOf(measure);
+      case 1:
+        return treeOf(measure, digits[0]);
+      case 2:
+        return treeOf(measure, digits[1], digits[0]);
+      case 3:
+        return leftTreeOf(measure, digits[2], digits[1], digits[0]);
+      case 4:
+        return leftTreeOf(measure, digits[3], digits[2], digits[1], digits[0]);
+    }
+    throw new IllegalStateException(String.valueOf(digits.length));
+  }
+
+  private static <M, T> T[] leftTail(T[] digits)
   {
     switch (digits.length)
     {
@@ -53,13 +73,14 @@ public class Deep<M, T> extends FTree<M, T>
     }
     throw new IllegalStateException();
   }
-  
+
   private T[] pr;
   private FTree<M, Node<M, T>> m;
   private T[] sf;
-  
+
   /*
-   * "Smart" constructor: may not be so smart when there is a cheaper way to calculate c (using other constructor)
+   * "Smart" constructor: may not be so smart when there is a cheaper way to calculate c (passing it using other
+   * constructor)
    */
   private Deep(Measure<M, T> measure, T[] pr, FTree<M, Node<M, T>> m, T[] sf)
   {
@@ -171,11 +192,11 @@ public class Deep<M, T> extends FTree<M, T>
     {
       if (m.isEmpty())
       {
-        return toTree(measure(), sf);
+        return treeOfDigits(measure(), sf);
       }
       return new Deep(measure(), (T[]) new Object[] { m.leftHead()}, m.leftTail(), sf);
     }
-    return new Deep(measure(), tail(pr), m, sf);
+    return new Deep(measure(), leftTail(pr), m, sf);
   }
 
   @Override
@@ -191,11 +212,11 @@ public class Deep<M, T> extends FTree<M, T>
     {
       if (m.isEmpty())
       {
-        return toTree(measure(), pr);
+        return treeOfDigits(measure(), pr);
       }
       return new Deep(measure(), pr, m.rightTail(), (T[]) new Object[] { m.rightHead()});
     }
-    return new Deep(measure(), pr, m, tail(sf));
+    return new Deep(measure(), pr, m, leftTail(sf));
   }
 
   @Override
@@ -725,10 +746,163 @@ public class Deep<M, T> extends FTree<M, T>
       }
     };
   }
-  
+
   @Override
   public String toStringWithMeasures()
   {
-    return "<#" + c() + "# #" + measureDigits(measure(), pr) + "#" + Arrays.toString(pr) + ", " + m.toStringWithMeasures() + ", #" + measureDigits(measure(), sf) + "#" + Arrays.toString(reverse(sf)) + ">";
+    return "<#" + c() + "# #" + measureDigits(measure(), pr) + "#" + Arrays.toString(pr) + ", "
+        + m.toStringWithMeasures() + ", #" + measureDigits(measure(), sf) + "#" + Arrays.toString(reverse(sf)) + ">";
+  }
+
+  private static <T> T[][] splitDigits(T[] d, int p)
+  {
+    switch ((d.length << 2) + p)
+    {
+      case 4:
+        return (T[][]) new Object[][] { new Object[0], new Object[0]};
+      case 8:
+        return (T[][]) new Object[][] { new Object[0], new Object[] { d[1]}};
+      case 9:
+        return (T[][]) new Object[][] { new Object[] { d[0]}, new Object[0]};
+      case 12:
+        return (T[][]) new Object[][] { new Object[0], new Object[] { d[1], d[2]}};
+      case 13:
+        return (T[][]) new Object[][] { new Object[] { d[0]}, new Object[] { d[2]}};
+      case 14:
+        return (T[][]) new Object[][] { new Object[] { d[0], d[1]}, new Object[0]};
+      case 16:
+        return (T[][]) new Object[][] { new Object[0], new Object[] { d[1], d[2], d[3]}};
+      case 17:
+        return (T[][]) new Object[][] { new Object[] { d[0]}, new Object[] { d[2], d[3]}};
+      case 18:
+        return (T[][]) new Object[][] { new Object[] { d[0], d[1]}, new Object[] { d[3]}};
+      case 19:
+        return (T[][]) new Object[][] { new Object[] { d[0], d[1], d[2]}, new Object[0]};
+      default:
+        throw new IllegalStateException();
+    }
+  }
+
+  public Split<M, T> split(Predicate<M> p, M i)
+  {
+    M r = i;
+    for (int ipr = 0; ipr < pr.length; ipr++)
+    {
+      r = measure().sum(r, measure().measure(pr[ipr]));
+      if (p.apply(r))
+      {
+        T[][] split = splitDigits(pr, ipr);
+        if (split[1].length == 0)
+        {
+          if (m.isEmpty())
+          {
+            return new Split<M, T>(treeOfDigits(measure(), split[0]), pr[ipr], reverseTreeOfDigits(measure(), sf));
+          }
+          else
+          {
+            return new Split<M, T>(treeOfDigits(measure(), split[0]), pr[ipr], new Deep(measure(),
+                (T[]) new Object[] { m.leftHead()}, m.leftTail(), sf));
+          }
+        }
+        else
+        {
+          return new Split<M, T>(treeOfDigits(measure(), split[0]), pr[ipr], new Deep(measure(), split[1], m, sf));
+        }
+      }
+    }
+    M mpr = r;
+    r = measure().sum(r, m.c());
+    if (p.apply(r))
+    {
+      Split<M, Node<M, T>> msplit = m.split(p, mpr);
+      T[] vs = msplit.getV().toArray();
+      mpr = measure().sum(mpr, msplit.getLeft().c(), measure().measure(vs[0]));
+      if (p.apply(mpr))
+      {
+        switch (vs.length)
+        {
+          case 2: // *n1* n2
+          {
+            if (msplit.getLeft().isEmpty())
+            {
+              return new Split<M, T>(treeOfDigits(measure(), pr), vs[0], new Deep(measure(), new Object[] { vs[1]},
+                  msplit.getRight(), sf));
+            }
+            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft().rightTail(), new Object[] { msplit
+                .getLeft().rightHead()}), vs[0], new Deep(measure(), new Object[] { vs[1]}, msplit.getRight(), sf));
+          }
+          case 3: // *n1* n2 n3
+          {
+            if (msplit.getLeft().isEmpty())
+            {
+              return new Split<M, T>(treeOfDigits(measure(), pr), vs[0], new Deep(measure(), new Object[] { vs[1],
+                  vs[2]}, msplit.getRight(), sf));
+            }
+            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft().rightTail(), new Object[] { msplit
+                .getLeft().rightHead()}), vs[0], new Deep(measure(), new Object[] { vs[1], vs[2]}, msplit.getRight(),
+                sf));
+          }
+        }
+      }
+      mpr = measure().sum(mpr, measure().measure(vs[1]));
+      if (p.apply(mpr))
+      {
+        switch (vs.length)
+        {
+          case 2: // n1 *n2*
+          {
+            if (msplit.getRight().isEmpty())
+            {
+              return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0]}), vs[1],
+                  reverseTreeOfDigits(measure(), sf));
+            }
+            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0]}), vs[1], new Deep(
+                measure(), new Object[] { msplit.getRight().leftHead()}, msplit.getRight().leftTail(), sf));
+          }
+          case 3: // n1 *n2* n3
+            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0]}), vs[1], new Deep(
+                measure(), new Object[] { vs[1]}, msplit.getRight(), sf));
+        }
+      }
+      if (vs.length > 2)
+      {
+        mpr = measure().sum(mpr, msplit.getLeft().c(), measure().measure(vs[2]));
+        if (p.apply(mpr)) // n1 n2 *n3*
+        {
+          if (msplit.getRight().isEmpty())
+          {
+            return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0], vs[1]}), vs[2],
+                reverseTreeOfDigits(measure(), sf));
+          }
+          return new Split<M, T>(new Deep(measure(), pr, msplit.getLeft(), new Object[] { vs[0], vs[1]}), vs[2],
+              new Deep(measure(), new Object[] { msplit.getRight().leftHead()}, msplit.getRight().leftTail(), sf));
+        }
+      }
+    }
+    for (int isf = sf.length - 1; isf > -1; isf--)
+    {
+      r = measure().sum(r, measure().measure(sf[isf]));
+      if (p.apply(r))
+      {
+        T[][] split = splitDigits(sf, isf);
+        if (split[1].length == 0)
+        {
+          if (m.isEmpty())
+          {
+            return new Split<M, T>(treeOfDigits(measure(), pr), sf[isf], treeOfDigits(measure(), split[0]));
+          }
+          else
+          {
+            return new Split<M, T>(new Deep(measure(), pr, m.rightTail(), (T[]) new Object[] { m.rightHead()}),
+                sf[isf], treeOfDigits(measure(), split[0]));
+          }
+        }
+        else
+        {
+          return new Split<M, T>(new Deep(measure(), pr, m, split[1]), sf[isf], treeOfDigits(measure(), split[0]));
+        }
+      }
+    }
+    return null;
   }
 }

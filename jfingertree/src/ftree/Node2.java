@@ -72,6 +72,12 @@ public class Node2<M, T> implements Node<M, T>
       }
     };
   }
+  
+  @Override
+  public T[] toArray()
+  {
+    return (T[]) new Object[] {n1, n2};
+  }
 
   @Override
   public String toString()

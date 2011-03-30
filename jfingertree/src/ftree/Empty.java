@@ -10,7 +10,7 @@ public final class Empty<M, T> extends FTree<M, T>
   {
     super(measure, measure.empty());
   }
-  
+
   @Override
   public boolean isEmpty()
   {
@@ -142,10 +142,16 @@ public final class Empty<M, T> extends FTree<M, T>
       }
     };
   }
-  
+
   @Override
   public String toStringWithMeasures()
   {
     return "<#" + c() + "#>";
+  }
+
+  @Override
+  public Split<M, T> split(Predicate<M> p, M i)
+  {
+    return null;
   }
 }

@@ -83,6 +83,8 @@ public abstract class FTree<M, T> implements Iterable<T>
 
   public abstract FTree<M, T> append(FTree<M, T> ft);
   
+  public abstract Split<M, T> split(Predicate<M> p, M i);
+  
   public abstract String toStringWithMeasures();
 
   protected abstract FTree<M, T> revappendDeep(Deep<M, T> ft);
@@ -105,12 +107,10 @@ public abstract class FTree<M, T> implements Iterable<T>
 
   public static void main(String[] args)
   {
-    List<Integer> l = new ArrayList<Integer>();
-    FTree<Integer, Object> ft = FTree.treeOf(Measure.<Object>size()).addRight("a").addRight("b").addRight("c");
-    FTree<Integer, Object> ft2 = FTree.treeOf(Measure.<Object>size()).addLeft("z").addLeft("x").addLeft("y");
-    System.out.println(ft.toStringWithMeasures());
-    System.out.println(ft2.toStringWithMeasures());
-    System.out.println(ft.append(ft2).toStringWithMeasures());
-    System.out.println(ft2.append(ft).toStringWithMeasures());
+    Measure<Integer, Object> measure = Measure.<Object>size();
+    FTree<Integer, Object> ft = FTree.treeOf(measure);
+    ft = ft.addRight("a").addRight("b").addRight("c");
+    System.out.println(ft.split(Predicate.index(1), measure.empty()));
+    System.out.println(ft.split(Predicate.index(2), measure.empty()));
   }
 }
