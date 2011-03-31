@@ -815,7 +815,7 @@ public class Deep<M, T> extends FTree<M, T>
     if (p.apply(r))
     {
       Split<M, Node<M, T>> msplit = m.split(p, mpr);
-      T[] vs = msplit.getV().toArray();
+      T[] vs = msplit.getCenter().toArray();
       mpr = measure().sum(mpr, msplit.getLeft().c(), measure().measure(vs[0]));
       if (p.apply(mpr))
       {

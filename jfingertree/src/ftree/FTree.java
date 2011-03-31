@@ -124,7 +124,7 @@ public abstract class FTree<M, T> implements Iterable<T>
         {
           System.out.println("error");
         }
-        FTree<Integer, Object> appendSplit = split.getLeft().addRight(split.getV()).append(split.getRight());
+        FTree<Integer, Object> appendSplit = split.getLeft().addRight(split.getCenter()).append(split.getRight());
         if (!(appendSplit.toList().equals(ftList)))
         {
           System.out.println(ft + " * " + split + " * " + appendSplit);

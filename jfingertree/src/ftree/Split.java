@@ -20,7 +20,7 @@ public class Split<M, T>
     return left;
   }
   
-  public T getV()
+  public T getCenter()
   {
     return v;
   }

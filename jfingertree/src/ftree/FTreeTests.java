@@ -359,7 +359,7 @@ public class FTreeTests
         Split<Integer, Object> split = ft.split(Predicate.index(j), 0);
         assertEquals((Integer) j, split.getLeft().c());
         assertEquals((Integer) (i - j), split.getRight().c());
-        FTree<Integer, Object> appendSplit = split.getLeft().addRight(split.getV()).append(split.getRight());
+        FTree<Integer, Object> appendSplit = split.getLeft().addRight(split.getCenter()).append(split.getRight());
         assertEquals(appendSplit.toList(), ftList);
       }
     }
