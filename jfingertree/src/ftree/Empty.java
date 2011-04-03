@@ -118,32 +118,6 @@ public final class Empty<M, T> extends FTree<M, T>
   }
 
   @Override
-  public Iterator<T> iterator()
-  {
-    return new Iterator<T>()
-    {
-
-      @Override
-      public boolean hasNext()
-      {
-        return false;
-      }
-
-      @Override
-      public T next()
-      {
-        throw new NoSuchElementException();
-      }
-
-      @Override
-      public void remove()
-      {
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
-
-  @Override
   public String toStringWithMeasures()
   {
     return "<#" + c() + "#>";

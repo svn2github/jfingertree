@@ -152,39 +152,6 @@ public class Single<M, T> extends FTree<M, T>
   }
 
   @Override
-  public Iterator<T> iterator()
-  {
-    return new Iterator<T>()
-    {
-
-      private boolean hasNext = true;
-
-      @Override
-      public boolean hasNext()
-      {
-        return hasNext;
-      }
-
-      @Override
-      public T next()
-      {
-        if (hasNext)
-        {
-          hasNext = false;
-          return v;
-        }
-        throw new NoSuchElementException();
-      }
-
-      @Override
-      public void remove()
-      {
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
-
-  @Override
   public String toStringWithMeasures()
   {
     return "<#" + c() + "# " + v + ">";

@@ -1,11 +1,11 @@
 package ftree;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class FTree<M, T> implements Iterable<T>
 {
-  
   private Measure<M, T> measure;
   private M c;
 
@@ -44,17 +44,20 @@ public abstract class FTree<M, T> implements Iterable<T>
   public static <M, T> FTree<M, T> treeOf(Measure<M, T> measure, T v1, T v2)
   {
     // paper: toTree().cons(v1).cons(v2)
-    return new Deep(measure, measure.sumMeasures(v1, v2), (T[]) new Object[] { v1}, new Empty(new NodeMeasure(measure)), (T[]) new Object[] { v2});
+    return new Deep(measure, measure.sumMeasures(v1, v2), (T[]) new Object[] { v1},
+        new Empty(new NodeMeasure(measure)), (T[]) new Object[] { v2});
   }
 
   public static <M, T> FTree<M, T> leftTreeOf(Measure<M, T> measure, T v1, T v2, T v3)
   {
-    return new Deep(measure, measure.sumMeasuresOf(v1, v2, v3), (T[]) new Object[] { v1, v2}, new Empty(new NodeMeasure(measure)), (T[]) new Object[] { v3});
+    return new Deep(measure, measure.sumMeasuresOf(v1, v2, v3), (T[]) new Object[] { v1, v2}, new Empty(
+        new NodeMeasure(measure)), (T[]) new Object[] { v3});
   }
 
   public static <M, T> FTree<M, T> leftTreeOf(Measure<M, T> measure, T v1, T v2, T v3, T v4)
   {
-    return new Deep(measure, measure.sumMeasuresOf(v1, v2, v3, v4), (T[]) new Object[] { v1, v2, v3}, new Empty(new NodeMeasure(measure)), (T[]) new Object[] { v4});
+    return new Deep(measure, measure.sumMeasuresOf(v1, v2, v3, v4), (T[]) new Object[] { v1, v2, v3}, new Empty(
+        new NodeMeasure(measure)), (T[]) new Object[] { v4});
   }
 
   public List<T> toList()
@@ -65,6 +68,56 @@ public abstract class FTree<M, T> implements Iterable<T>
       list.add(t);
     }
     return list;
+  }
+
+  public Iterator<T> iterator()
+  {
+    return new Iterator<T>()
+    {
+      FTree<M, T> ft = FTree.this;
+      
+      public boolean hasNext()
+      {
+        return !ft.isEmpty();
+      }
+
+      public T next()
+      {
+        T next = ft.leftHead();
+        ft = ft.leftTail();
+        return next;
+      }
+
+      public void remove()
+      {
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
+
+  public Iterator<T> descendingIterator()
+  {
+    return new Iterator<T>()
+    {
+      FTree<M, T> ft = FTree.this;
+      
+      public boolean hasNext()
+      {
+        return !ft.isEmpty();
+      }
+
+      public T next()
+      {
+        T next = ft.rightHead();
+        ft = ft.rightTail();
+        return next;
+      }
+
+      public void remove()
+      {
+        throw new UnsupportedOperationException();
+      }
+    };
   }
 
   public abstract FTree<M, T> addLeft(T v);
@@ -82,9 +135,9 @@ public abstract class FTree<M, T> implements Iterable<T>
   public abstract FTree<M, T> rightTail();
 
   public abstract FTree<M, T> append(FTree<M, T> ft);
-  
+
   public abstract Split<M, T> split(Predicate<M> p, M i);
-  
+
   public abstract String toStringWithMeasures();
 
   protected abstract FTree<M, T> revappendDeep(Deep<M, T> ft);
@@ -107,7 +160,7 @@ public abstract class FTree<M, T> implements Iterable<T>
 
   public static void main(String[] args)
   {
-    Measure<Integer, Object> measure = Measure.<Object>size();
+    Measure<Integer, Object> measure = Measure.<Object> size();
     FTree<Integer, Object> ft = FTree.treeOf(measure);
     for (int i = 0; i < 200; i++)
     {
@@ -131,11 +184,11 @@ public abstract class FTree<M, T> implements Iterable<T>
         }
       }
     }
-//    for (int i = 0; i < 30; i++)
-//    {
-//      ft = ft.addLeft(i);
-//    }
-//    Split<Integer, Object> split = ft.split(Predicate.index(20), 0);
-//    System.out.println(split);
+    // for (int i = 0; i < 30; i++)
+    // {
+    // ft = ft.addLeft(i);
+    // }
+    // Split<Integer, Object> split = ft.split(Predicate.index(20), 0);
+    // System.out.println(split);
   }
 }
