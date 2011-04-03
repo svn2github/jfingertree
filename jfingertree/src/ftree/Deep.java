@@ -192,7 +192,7 @@ public class Deep<M, T> extends FTree<M, T>
     {
       if (m.isEmpty())
       {
-        return treeOfDigits(measure(), sf);
+        return reverseTreeOfDigits(measure(), sf);
       }
       return new Deep<M, T>(measure(), m.leftHead().toArray(), m.leftTail(), sf);
     }
