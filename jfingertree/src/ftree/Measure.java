@@ -60,6 +60,31 @@ public abstract class Measure<M, T>
     };
   }
 
+  public static final Measure<Integer, Integer> intSum()
+  {
+    return new Measure<Integer, Integer>()
+    {
+
+      @Override
+      public Integer measure(Integer v)
+      {
+        return v;
+      }
+
+      @Override
+      public Integer empty()
+      {
+        return 0;
+      }
+
+      @Override
+      public Integer sum(Integer a, Integer b)
+      {
+        return a + b;
+      }
+    };
+  }
+
   public abstract M measure(T t);
   public abstract M empty();
   public abstract M sum(M a, M b);
