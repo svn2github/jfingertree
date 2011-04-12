@@ -1,7 +1,5 @@
 package ftree;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public final class Empty<M, T> extends FTree<M, T>
 {
@@ -120,7 +118,7 @@ public final class Empty<M, T> extends FTree<M, T>
   @Override
   public String toStringWithMeasures()
   {
-    return "<#" + c() + "#>";
+    return "<#" + cached() + "#>";
   }
 
   @Override

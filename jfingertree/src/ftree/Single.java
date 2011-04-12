@@ -1,7 +1,5 @@
 package ftree;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class Single<M, T> extends FTree<M, T>
 {
@@ -22,13 +20,13 @@ public class Single<M, T> extends FTree<M, T>
 
   public FTree<M, T> addLeft(T v)
   {
-    return new Deep<M, T>(measure(), measure().sum(c(), measure().measure(v)), (T[]) new Object[] { v},
+    return new Deep<M, T>(measure(), measure().sum(cached(), measure().measure(v)), (T[]) new Object[] { v},
         new Empty<M, Node<M, T>>(new NodeMeasure<M, T>(measure())), (T[]) new Object[] { this.v});
   };
 
   public FTree<M, T> addRight(T v)
   {
-    return new Deep<M, T>(measure(), measure().sum(c(), measure().measure(v)), (T[]) new Object[] { this.v},
+    return new Deep<M, T>(measure(), measure().sum(cached(), measure().measure(v)), (T[]) new Object[] { this.v},
         new Empty<M, Node<M, T>>(new NodeMeasure<M, T>(measure())), (T[]) new Object[] { v});
   };
 
@@ -154,7 +152,7 @@ public class Single<M, T> extends FTree<M, T>
   @Override
   public String toStringWithMeasures()
   {
-    return "<#" + c() + "# " + v + ">";
+    return "<#" + cached() + "# " + v + ">";
   }
 
   public Split<M, T> split(Predicate<M> p, M i)

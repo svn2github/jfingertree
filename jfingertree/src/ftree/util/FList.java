@@ -83,7 +83,7 @@ public class FList<T> extends AbstractList<T> implements Deque<T>, RandomAccess
   @Override
   public int size()
   {
-    return ft.c();
+    return ft.cached();
   }
 
   @Override

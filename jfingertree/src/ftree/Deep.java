@@ -1,9 +1,6 @@
 package ftree;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 public class Deep<M, T> extends FTree<M, T>
 {
@@ -84,7 +81,7 @@ public class Deep<M, T> extends FTree<M, T>
    */
   private Deep(Measure<M, T> measure, T[] pr, FTree<M, Node<M, T>> m, T[] sf)
   {
-    this(measure, measure.sum(measureDigits(measure, pr), m.c(), measureDigits(measure, sf)), pr, m, sf);
+    this(measure, measure.sum(measureDigits(measure, pr), m.cached(), measureDigits(measure, sf)), pr, m, sf);
   }
 
   public Deep(Measure<M, T> measure, M c, T[] pr, FTree<M, Node<M, T>> m, T[] sf)
@@ -121,7 +118,7 @@ public class Deep<M, T> extends FTree<M, T>
 
   public FTree<M, T> addLeft(T v)
   {
-    M newC = measure().sum(c(), measure().measure(v));
+    M newC = measure().sum(cached(), measure().measure(v));
     switch (pr.length)
     {
       case 1:
@@ -151,7 +148,7 @@ public class Deep<M, T> extends FTree<M, T>
 
   public FTree<M, T> addRight(T v)
   {
-    M newC = measure().sum(c(), measure().measure(v));
+    M newC = measure().sum(cached(), measure().measure(v));
     switch (sf.length)
     {
       case 1:
@@ -657,7 +654,7 @@ public class Deep<M, T> extends FTree<M, T>
   @Override
   public String toStringWithMeasures()
   {
-    return "<#" + c() + "# #" + measureDigits(measure(), pr) + "#" + Arrays.toString(pr) + ", "
+    return "<#" + cached() + "# #" + measureDigits(measure(), pr) + "#" + Arrays.toString(pr) + ", "
         + m.toStringWithMeasures() + ", #" + measureDigits(measure(), sf) + "#" + Arrays.toString(reverse(sf)) + ">";
   }
 
@@ -718,12 +715,12 @@ public class Deep<M, T> extends FTree<M, T>
       }
     }
     M mpr = r;
-    r = measure().sum(r, m.c());
+    r = measure().sum(r, m.cached());
     if (p.apply(r))
     {
       Split<M, Node<M, T>> msplit = m.split(p, mpr);
       T[] vs = msplit.getCenter().toArray();
-      mpr = measure().sum(mpr, msplit.getLeft().c(), measure().measure(vs[0]));
+      mpr = measure().sum(mpr, msplit.getLeft().cached(), measure().measure(vs[0]));
       if (p.apply(mpr))
       {
         switch (vs.length)
@@ -773,7 +770,7 @@ public class Deep<M, T> extends FTree<M, T>
       }
       if (vs.length > 2)
       {
-        mpr = measure().sum(mpr, msplit.getLeft().c(), measure().measure(vs[2]));
+        mpr = measure().sum(mpr, msplit.getLeft().cached(), measure().measure(vs[2]));
         if (p.apply(mpr)) // n1 n2 *n3*
         {
           if (msplit.getRight().isEmpty())

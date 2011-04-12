@@ -21,7 +21,7 @@ public abstract class FTree<M, T> implements Iterable<T>
     return measure;
   }
 
-  public M c()
+  public M cached()
   {
     return c;
   }
@@ -169,11 +169,11 @@ public abstract class FTree<M, T> implements Iterable<T>
       for (int j = 0; j < i; j++)
       {
         Split<Integer, Object> split = ft.split(Predicate.index(j), 0);
-        if (!(split.getLeft().c() == j))
+        if (!(split.getLeft().cached() == j))
         {
           System.out.println("error");
         }
-        if (!(split.getRight().c() == i - j))
+        if (!(split.getRight().cached() == i - j))
         {
           System.out.println("error");
         }

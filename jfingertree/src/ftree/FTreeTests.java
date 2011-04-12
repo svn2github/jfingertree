@@ -7,10 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -124,13 +122,13 @@ public class FTreeTests
       ft = ft.addRight(i);
     }
     FTree<Integer, Object> ft2 = ft;
-    assertEquals((Integer) 500, ft.c());
+    assertEquals((Integer) 500, ft.cached());
     for (int i = 499; i > -1; i--)
     {
       ft = ft.leftTail();
       ft2 = ft2.rightTail();
-      assertEquals((Integer) i, ft.c()); 
-      assertEquals((Integer) i, ft2.c()); 
+      assertEquals((Integer) i, ft.cached()); 
+      assertEquals((Integer) i, ft2.cached()); 
     }
   }
   
@@ -288,9 +286,9 @@ public class FTreeTests
     FTree<Integer, Object> ft = FTree.treeOf(Measure.<Object>size());
     for (int i = 0; i < 1000; i++)
     {
-      assertEquals((Integer) (i * 2), ft.c());
+      assertEquals((Integer) (i * 2), ft.cached());
       ft = ft.addLeft(i);
-      assertEquals((Integer) (i * 2 + 1), ft.c());
+      assertEquals((Integer) (i * 2 + 1), ft.cached());
       ft = ft.addRight(i);
     }    
   }
@@ -305,18 +303,18 @@ public class FTreeTests
   public void testSizeMonoidUnderAppend()
   {
     FTree<Integer, Object> ft = FTree.treeOf(Measure.<Object>size());
-    assertEquals((Integer) 0, ft.c()); 
+    assertEquals((Integer) 0, ft.cached()); 
     for (int j = 0; j < 150; j++)
     {
       ft = ft.addRight(j);
-      assertEquals((Integer) (j + 1), ft.c()); 
+      assertEquals((Integer) (j + 1), ft.cached()); 
       FTree<Integer, Object> ft2 = FTree.treeOf(Measure.<Object>size());
       for (int k = 0; k < j; k++)
       {
         ft2 = ft2.addLeft(j);
-        assertEquals((Integer) (k + 1), ft2.c());
-        assertEquals((Integer) (j + k + 2), ft.append(ft2).c());        
-        assertEquals((Integer) (j + k + 2), ft2.append(ft).c());        
+        assertEquals((Integer) (k + 1), ft2.cached());
+        assertEquals((Integer) (j + k + 2), ft.append(ft2).cached());        
+        assertEquals((Integer) (j + k + 2), ft2.append(ft).cached());        
       }
     }
   }
@@ -357,8 +355,8 @@ public class FTreeTests
       for (int j = 0; j < i; j++)
       {
         Split<Integer, Object> split = ft.split(Predicate.index(j), 0);
-        assertEquals((Integer) j, split.getLeft().c());
-        assertEquals((Integer) (i - j), split.getRight().c());
+        assertEquals((Integer) j, split.getLeft().cached());
+        assertEquals((Integer) (i - j), split.getRight().cached());
         FTree<Integer, Object> appendSplit = split.getLeft().addRight(split.getCenter()).append(split.getRight());
         assertEquals(appendSplit.toList(), ftList);
       }
