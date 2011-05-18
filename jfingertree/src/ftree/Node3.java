@@ -20,6 +20,15 @@ public class Node3<M, T> implements Node<M, T>
     this.n3 = n3;
   }
 
+  private Node3(M c, T n1, T n2, T n3)
+  {
+    super();
+    this.c = c;
+    this.n1 = n1;
+    this.n2 = n2;
+    this.n3 = n3;
+  }
+
   public T getN1()
   {
     return n1;
@@ -103,6 +112,24 @@ public class Node3<M, T> implements Node<M, T>
       }
     };
   }
+  
+	public <N, U> Node<N, U> map(Measure<N, U> measure, Mapper<T, U> mapper)
+	{
+		U newN1 = mapper.map(n1);
+		U newN2 = mapper.map(n2);
+		U newN3 = mapper.map(n3);
+		return new Node3<N, U>(measure, newN1, newN2, newN3);
+	}
 
+	public ScanResult<M> scan(Scanner<M, T> scanner, M i)
+	{
+		ScanResult<M> r1 = scanner.scan(n1, i);
+		Object newN1 = r1.getV(); 
+		ScanResult<M> r2 = scanner.scan(n2, r1.getI());
+		Object newN2 = r2.getV();
+		ScanResult<M> r3 = scanner.scan(n3, r2.getI());
+		Object newN3 = r3.getV();
+		return new ScanResult<M>(r3.getI(), new Node3<Void, Object>((Void) null, newN1, newN2, newN3));
+	}
 
 }

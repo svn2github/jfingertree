@@ -262,10 +262,16 @@ public class FList<T> extends AbstractList<T> implements Deque<T>, RandomAccess
   {
     return removeFirst();
   }
+  
+  @Override
+  public Iterator<T> iterator()
+  {
+  	return ft.iterator();
+  }
 
   @Override
   public Iterator<T> descendingIterator()
   {
-    throw new UnsupportedOperationException("not yet implemented");
+    return ft.descendingIterator();
   }
 }
