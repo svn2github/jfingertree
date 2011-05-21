@@ -28,6 +28,16 @@ public abstract class FTree<M, T> implements Iterable<T>
 	{
 		return c;
 	}
+	
+	public static <M, T> FTree<M, T> fromIterable(Measure<M, T> measure, Iterable<T> iterable)
+	{
+		FTree<M, T> tree = treeOf(measure);
+		for (T v : iterable)
+		{
+			tree = tree.addRight(v);
+		}
+		return tree;
+	}
 
 	public static <M, T> FTree<M, T> treeOf(Measure<M, T> measure)
 	{
@@ -141,6 +151,32 @@ public abstract class FTree<M, T> implements Iterable<T>
 	public abstract <N, U> FTree<N, U> map(Measure<N, U> newMeasure,
 			Mapper<T, U> mapper);
 
+	public FTree<Void, Object> psum()
+	{
+		M empty = measure().empty();
+		return psum(empty, new Scanner<M, T>()
+		{
+			public ScanResult<M> scan(T v, M i)
+			{
+				M r = measure().sum(measure().measure(v), i);
+				return new ScanResult<M>(r, r);
+			}
+		}).addLeft(empty);
+	}
+
+	public FTree<Void, Object> ppsum(ExecutorService executor)
+	{
+		M empty = measure().empty();
+		return ppsum(empty, new Scanner<M, T>()
+		{
+			public ScanResult<M> scan(T v, M i)
+			{
+				M r = measure().sum(measure().measure(v), i);
+				return new ScanResult<M>(r, r);
+			}
+		}, executor).addLeft(empty);
+	}
+
 	public abstract FTree<Void, Object> psum(M i, Scanner<M, T> scanner);
 
 	public abstract FTree<Void, Object> ppsum(M i, Scanner<M, T> scanner,
@@ -192,50 +228,17 @@ public abstract class FTree<M, T> implements Iterable<T>
 
 	public static void main(String[] args)
 	{
-		Measure<Integer, Integer> measure = Measure.intSum();
-		FTree<Integer, Integer> ft = FTree.treeOf(measure);
-		for (int i = 0; i < 1000000; i++)
+    Measure<Integer, Integer> measure = Measure.intSum();
+    FTree<Integer, Integer> ft = FTree.treeOf(measure);
+    ft = ft.addRight(1).addRight(2).addRight(3).addRight(4).addRight(5);
+    System.out.println(ft.split(new Predicate<Integer>()
 		{
-			ft = ft.addRight(i);
-		}
-//		System.out.println(ft);
-
-		long mstart = System.currentTimeMillis();
-		FTree<Void, Integer> manual = FTree.treeOf();
-		int total = 0;
-		for (Integer n : ft)
-		{
-			manual = manual.addRight(total += n);
-		}
-		long mend = System.currentTimeMillis();
-//		System.out.println(manual);
-
-		long pstart = System.currentTimeMillis();
-		FTree<Void, Object> psum = ft.psum(0, new Scanner<Integer, Integer>()
-		{
-			public ScanResult<Integer> scan(Integer v, Integer i)
+			
+			@Override
+			public boolean apply(Integer v)
 			{
-				return new ScanResult(v + i, v + i);
+				return v > 3;
 			}
-		});
-		long pend = System.currentTimeMillis();
-//		System.out.println(psum);
-
-		ForkJoinPool executor = new ForkJoinPool();
-		long ppstart = System.currentTimeMillis();
-		FTree<Void, Object> ppsum = ft.ppsum(0, new Scanner<Integer, Integer>()
-		{
-			public ScanResult<Integer> scan(Integer v, Integer i)
-			{
-				return new ScanResult(v + i, v + i);
-			}
-		}, executor);
-		long ppend = System.currentTimeMillis();
-//		System.out.println(ppsum);
-		
-		
-		System.out.println("equal? " + (manual.toList().equals(psum.toList()) && psum.toList().equals(ppsum.toList())));
-		System.out.println("manual " + (mend - mstart) + " psum " + (pend - pstart) + " ppsum " + (ppend - ppstart));
-		System.out.println(executor);
+		}, 0));
 	}
 }

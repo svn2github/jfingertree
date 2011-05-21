@@ -884,19 +884,19 @@ public class Deep<M, T> extends FTree<M, T>
 					if (m.isEmpty())
 					{
 						return new Split<M, T>(treeOfDigits(measure(), pr), sf[isf],
-								treeOfDigits(measure(), split[0]));
+								reverseTreeOfDigits(measure(), split[0]));
 					}
 					else
 					{
 						return new Split<M, T>(new Deep(measure(), pr, m.rightTail(), m
-								.rightHead().toReverseArray()), sf[isf], treeOfDigits(
+								.rightHead().toReverseArray()), sf[isf], reverseTreeOfDigits(
 								measure(), split[0]));
 					}
 				}
 				else
 				{
 					return new Split<M, T>(new Deep(measure(), pr, m, split[1]), sf[isf],
-							treeOfDigits(measure(), split[0]));
+							reverseTreeOfDigits(measure(), split[0]));
 				}
 			}
 		}
