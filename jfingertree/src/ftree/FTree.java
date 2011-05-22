@@ -3,6 +3,7 @@ package ftree;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.ExecutorService;
 
 import jsr166y.ForkJoinPool;
@@ -28,8 +29,9 @@ public abstract class FTree<M, T> implements Iterable<T>
 	{
 		return c;
 	}
-	
-	public static <M, T> FTree<M, T> fromIterable(Measure<M, T> measure, Iterable<T> iterable)
+
+	public static <M, T> FTree<M, T> fromIterable(Measure<M, T> measure,
+			Iterable<T> iterable)
 	{
 		FTree<M, T> tree = treeOf(measure);
 		for (T v : iterable)
@@ -148,6 +150,46 @@ public abstract class FTree<M, T> implements Iterable<T>
 		};
 	}
 
+	public final boolean equals(Object o)
+	{
+		if (o == this)
+			return true;
+		if (!(o instanceof FTree))
+			return false;
+
+		Iterator<T> e1 = iterator();
+		Iterator<T> e2 = ((FTree) o).iterator();
+		while (e1.hasNext() && e2.hasNext())
+		{
+			T o1 = e1.next();
+			Object o2 = e2.next();
+			if (!(o1 == null ? o2 == null : o1.equals(o2)))
+				return false;
+		}
+		return !(e1.hasNext() || e2.hasNext());
+	}
+
+	/**
+	 * Returns the hash code value for this list.
+	 * 
+	 * <p>
+	 * This implementation uses exactly the code that is used to define the list
+	 * hash function in the documentation for the {@link List#hashCode} method.
+	 * 
+	 * @return the hash code value for this list
+	 */
+	public final int hashCode()
+	{
+		int hashCode = 1;
+		Iterator<T> i = iterator();
+		while (i.hasNext())
+		{
+			T obj = i.next();
+			hashCode = 31 * hashCode + (obj == null ? 0 : obj.hashCode());
+		}
+		return hashCode;
+	}
+
 	public abstract <N, U> FTree<N, U> map(Measure<N, U> newMeasure,
 			Mapper<T, U> mapper);
 
@@ -228,12 +270,12 @@ public abstract class FTree<M, T> implements Iterable<T>
 
 	public static void main(String[] args)
 	{
-    Measure<Integer, Integer> measure = Measure.intSum();
-    FTree<Integer, Integer> ft = FTree.treeOf(measure);
-    ft = ft.addRight(1).addRight(2).addRight(3).addRight(4).addRight(5);
-    System.out.println(ft.split(new Predicate<Integer>()
+		Measure<Integer, Integer> measure = Measure.intSum();
+		FTree<Integer, Integer> ft = FTree.treeOf(measure);
+		ft = ft.addRight(1).addRight(2).addRight(3).addRight(4).addRight(5);
+		System.out.println(ft.split(new Predicate<Integer>()
 		{
-			
+
 			@Override
 			public boolean apply(Integer v)
 			{

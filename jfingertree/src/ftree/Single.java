@@ -60,15 +60,6 @@ public class Single<M, T> extends FTree<M, T>
 	}
 
 	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((v == null) ? 0 : v.hashCode());
-		return result;
-	}
-
-	@Override
 	public FTree<M, T> append(FTree<M, T> ft)
 	{
 		return ft.addLeft(v);
@@ -78,26 +69,6 @@ public class Single<M, T> extends FTree<M, T>
 	protected FTree<M, T> revappendDeep(Deep<M, T> ft)
 	{
 		return ft.addRight(v);
-	}
-
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Single other = (Single) obj;
-		if (v == null)
-		{
-			if (other.v != null)
-				return false;
-		}
-		else if (!v.equals(other.v))
-			return false;
-		return true;
 	}
 
 	@Override

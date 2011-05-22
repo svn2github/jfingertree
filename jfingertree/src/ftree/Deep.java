@@ -675,41 +675,6 @@ public class Deep<M, T> extends FTree<M, T>
 	}
 
 	@Override
-	public int hashCode()
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((m == null) ? 0 : m.hashCode());
-		result = prime * result + Arrays.hashCode(pr);
-		result = prime * result + Arrays.hashCode(sf);
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj)
-	{
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Deep other = (Deep) obj;
-		if (m == null)
-		{
-			if (other.m != null)
-				return false;
-		}
-		else if (!m.equals(other.m))
-			return false;
-		if (!Arrays.equals(pr, other.pr))
-			return false;
-		if (!Arrays.equals(sf, other.sf))
-			return false;
-		return true;
-	}
-
-	@Override
 	public String toString()
 	{
 		return "<" + Arrays.toString(pr) + ", " + m + ", "
